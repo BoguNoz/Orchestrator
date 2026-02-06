@@ -1,0 +1,185 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #333;
+}
+
+.hidden {
+    display: none;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    outline: none;
+}
+
+/* ===== USERNAME PAGE ===== */
+#username-page {
+    width: 100%;
+    max-width: 420px;
+}
+
+.username-page-container {
+    background: #fff;
+    padding: 40px;
+    border-radius: 14px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.username-page-container .title {
+    margin-bottom: 25px;
+    font-size: 24px;
+    font-weight: 600;
+    color: #444;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    outline: none;
+}
+
+.username-submit {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    background: #667eea;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+.username-submit:hover {
+    background: #556cd6;
+}
+
+/* ===== CHAT PAGE ===== */
+#chat-page {
+    width: 100%;
+    max-width: 900px;
+}
+
+.chat-container {
+    background: #fff;
+    height: 80vh;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ===== HEADER ===== */
+.chat-header {
+    padding: 18px 24px;
+    background: #667eea;
+    color: white;
+}
+
+.chat-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* ===== CONNECTING ===== */
+.connecting {
+    padding: 12px;
+    text-align: center;
+    font-size: 14px;
+    background: #f1f1f1;
+    color: #777;
+}
+
+/* ===== MESSAGES ===== */
+#messageArea {
+    list-style: none;
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #f7f8fc;
+}
+
+#messageArea li {
+    margin-bottom: 14px;
+}
+
+.message {
+    max-width: 70%;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.message.self {
+    background: #667eea;
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+}
+
+.message.other {
+    background: #e4e7f7;
+    color: #333;
+    border-bottom-left-radius: 4px;
+}
+
+.message .sender {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    opacity: 0.7;
+}
+
+/* ===== FORM ===== */
+#messageForm {
+    padding: 16px;
+    background: #fff;
+    border-top: 1px solid #eee;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+}
+
+.input-group input {
+    flex: 1;
+}
+
+.primary {
+    padding: 0 22px;
+    border-radius: 10px;
+    background: #667eea;
+    color: white;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+.primary:hover {
+    background: #556cd6;
+}

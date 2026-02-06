@@ -1,3 +1,20 @@
+server:
+  port: 8080
+
+websocket:
+  broker:
+    destinationPrefix: /topic
+    publicTopic: /topic/public
+  application:
+    destinationPrefix: /app
+  endpoint:
+    chat: /chat
+
+openai:
+  client:
+    key:
+    endpoint:
+
 spring:
   application:
     name: Orchestrator
