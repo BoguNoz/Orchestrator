@@ -1,14 +1,10 @@
 package com.bogunoz.projects.orchestrator.websocket.model;
 
-import lombok.*;
+import lombok.Builder;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class ChatMessage {
-    private String content;
-    private MessageType messageType;
-    private String sender;
-}
+public record ChatMessage (
+    String content,
+    MessageType messageType,
+    String sender
+) {}

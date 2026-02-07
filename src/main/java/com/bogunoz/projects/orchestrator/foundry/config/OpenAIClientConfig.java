@@ -1,4 +1,4 @@
-package com.bogunoz.projects.orchestrator.fundry.config;
+package com.bogunoz.projects.orchestrator.foundry.config;
 
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.OpenAIClientBuilder;
@@ -10,20 +10,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties(OpenAIClientProperties.class)
 public class OpenAIClientConfig {
-
-    // region IoC
-    private final OpenAIClientProperties props;
-    // endregion IoC
-
-
-    public OpenAIClientConfig(OpenAIClientProperties props) {
-        this.props = props;
-    }
-
     @Bean
     public OpenAIClient openAIClient(OpenAIClientProperties props) {
         return new OpenAIClientBuilder()
-                .credential(new AzureKeyCredential(props.getApiKey()))
+                .credential(new AzureKeyCredential(props.getKey()))
                 .endpoint(props.getEndpoint())
                 .buildClient();
     }
