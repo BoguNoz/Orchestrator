@@ -5,8 +5,11 @@ import com.bogunoz.projects.orchestrator.common.model.Response;
 import com.bogunoz.projects.orchestrator.contract.foundry.FoundryChatRequest;
 import org.springframework.modulith.NamedInterface;
 
+import java.util.concurrent.CompletableFuture;
+
+
 @NamedInterface
 @ServiceInterface(name = "foundry")
-public interface IFoundryService {
-    Response<String> askChat(FoundryChatRequest request);
+public interface IAIService {
+    CompletableFuture<Response<String>> askChatAsync(FoundryChatRequest request);
 }

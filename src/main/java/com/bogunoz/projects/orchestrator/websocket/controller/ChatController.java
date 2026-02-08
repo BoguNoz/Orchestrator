@@ -2,6 +2,7 @@ package com.bogunoz.projects.orchestrator.websocket.controller;
 
 import com.bogunoz.projects.orchestrator.websocket.config.WebSocketProperties;
 import com.bogunoz.projects.orchestrator.websocket.model.ChatMessage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -13,6 +14,7 @@ public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final WebSocketProperties props;
 
+    @Autowired
     public ChatController(SimpMessagingTemplate messagingTemplate, WebSocketProperties props) {
         this.messagingTemplate = messagingTemplate;
         this.props = props;

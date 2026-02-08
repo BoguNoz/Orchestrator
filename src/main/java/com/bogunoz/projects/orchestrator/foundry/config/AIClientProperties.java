@@ -6,8 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Setter
 @Getter
-@ConfigurationProperties(prefix = "openai.client")
-public class OpenAIClientProperties {
+@ConfigurationProperties(prefix = "ai.client")
+public class AIClientProperties {
     private String key;
     private String endpoint;
     private String model;
