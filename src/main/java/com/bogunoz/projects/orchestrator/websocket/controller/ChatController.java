@@ -14,7 +14,6 @@ public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final WebSocketProperties props;
 
-    @Autowired
     public ChatController(SimpMessagingTemplate messagingTemplate, WebSocketProperties props) {
         this.messagingTemplate = messagingTemplate;
         this.props = props;

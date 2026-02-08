@@ -4,14 +4,13 @@ import com.bogunoz.projects.orchestrator.common.constant.Error;
 import com.bogunoz.projects.orchestrator.common.model.Response;
 import com.bogunoz.projects.orchestrator.contract.weather.WeatherForecastRequest;
 import com.bogunoz.projects.orchestrator.contract.weather.WeatherForecastResponse;
-import com.bogunoz.projects.orchestrator.weather.client.IWeatherApiClient;
+import com.bogunoz.projects.orchestrator.weather.client.IWeatherClient;
 import com.bogunoz.projects.orchestrator.weather.model.LocationModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jspecify.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -22,12 +21,11 @@ import java.util.concurrent.CompletableFuture;
 public class OpenWeatherService implements IWeatherService {
 
     // region IoC
-    private final IWeatherApiClient weatherApiClient;
+    private final IWeatherClient weatherApiClient;
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     // endregion IoC
 
-    @Autowired
-    public OpenWeatherService(IWeatherApiClient weatherApiClient) {
+    public OpenWeatherService(IWeatherClient weatherApiClient) {
         this.weatherApiClient = weatherApiClient;
     }
 

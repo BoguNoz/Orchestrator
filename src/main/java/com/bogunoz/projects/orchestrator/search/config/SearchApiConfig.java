@@ -1,9 +1,10 @@
-package com.bogunoz.projects.orchestrator.weather.config;
+package com.bogunoz.projects.orchestrator.search.config;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+
 @Configuration
-@EnableConfigurationProperties(WeatherApiProperties.class)
-public class WeatherApiConfig {
+@EnableConfigurationProperties(SearchApiProperties.class)
+public class SearchApiConfig {
 }

@@ -31,7 +31,6 @@ public class OpenAiService implements IAIService {
     private final AIClientProperties props;
     // endregion IoC
 
-    @Autowired
     public OpenAiService(@Value("classpath:prompts/default-prompt.txt") Resource resource,
                          OpenAIClient client,
                          AIClientProperties props) {
