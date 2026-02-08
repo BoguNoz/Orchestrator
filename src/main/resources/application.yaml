@@ -3,17 +3,28 @@ server:
 
 websocket:
   broker:
-    destinationPrefix: /topic
-    publicTopic: /topic/public
+    destination-prefix: /topic
+    public-topic: /topic/public
   application:
-    destinationPrefix: /app
+    destination-prefix: /app
   endpoint:
     chat: /chat
 
-openai:
+ai:
   client:
     key:
-    endpoint:
+    endpoint: https://31807-mlbbn35c-eastus2.cognitiveservices.azure.com/
+    model: gpt-4o
+    deployment-name: gpt-4o
+    max-tokens: 500
+    temperature: 1d
+    top-p: 1d
+
+weather:
+  api:
+    key:
+    geocoding-endpoint: https://api.openweathermap.org/geo/1.0/direct
+    current-endpoint: https://api.openweathermap.org/data/2.5/weather
 
 spring:
   application:

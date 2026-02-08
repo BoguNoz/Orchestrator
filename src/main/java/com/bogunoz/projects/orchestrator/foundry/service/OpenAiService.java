@@ -7,28 +7,34 @@ import com.azure.ai.openai.models.ChatRequestUserMessage;
 import com.bogunoz.projects.orchestrator.common.constant.Error;
 import com.bogunoz.projects.orchestrator.common.model.Response;
 import com.bogunoz.projects.orchestrator.contract.foundry.FoundryChatRequest;
-import com.bogunoz.projects.orchestrator.foundry.config.OpenAIClientProperties;
+import com.bogunoz.projects.orchestrator.foundry.config.AIClientProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
-public class FoundryService implements IFoundryService {
+@Qualifier("openai")
+public class OpenAiService implements IAIService {
 
     // region IoC
     private final OpenAIClient client;
     private final String defaultPrompt;
-    private final OpenAIClientProperties props;
+    private final AIClientProperties props;
     // endregion IoC
 
-    public FoundryService(@Value("classpath:prompts/default-prompt.txt") Resource resource,
-                          OpenAIClient client,
-                          OpenAIClientProperties props) {
+    @Autowired
+    public OpenAiService(@Value("classpath:prompts/default-prompt.txt") Resource resource,
+                         OpenAIClient client,
+                         AIClientProperties props) {
         this.client = client;
         this.props = props;
         this.defaultPrompt = readResource(resource);
@@ -42,7 +48,8 @@ public class FoundryService implements IFoundryService {
         }
     }
 
-    public Response<String> askChat(FoundryChatRequest request) {
+    @Async
+    public CompletableFuture<Response<String>> askChatAsync(FoundryChatRequest request) {
         var systemPrompt = buildSystemPrompt(request.context());
 
         var chatMessages = List.of(
@@ -66,7 +73,7 @@ public class FoundryService implements IFoundryService {
                 .getMessage()
                 .getContent();
 
-        return Response.ok(answer);
+        return CompletableFuture.completedFuture(Response.ok(answer));
     }
 
     private String buildSystemPrompt(List<String> context) {

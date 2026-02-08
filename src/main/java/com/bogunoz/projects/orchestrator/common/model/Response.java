@@ -6,7 +6,7 @@ import org.springframework.modulith.NamedInterface;
 import java.util.List;
 
 @Getter
-@NamedInterface("dto")
+@NamedInterface
 public class Response<T> {
 
     private final T data;
