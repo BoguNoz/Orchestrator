@@ -7,5 +7,5 @@ import java.util.concurrent.CompletableFuture;
 @ServiceInterface(name = "search-client")
 public interface ISearchClient {
 
-    CompletableFuture<String> getSearchResult(String cx);
+    CompletableFuture<String> getSearchResult(String query);
 }

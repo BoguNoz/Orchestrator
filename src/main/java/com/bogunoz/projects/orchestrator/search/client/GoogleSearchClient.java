@@ -25,11 +25,14 @@ public class GoogleSearchClient implements ISearchClient {
     }
 
     @Override
-    public CompletableFuture<String> getSearchResult(String cx) {
-        var url = String.format("%s?key=%s&xs=%s",
+    public CompletableFuture<String> getSearchResult(String query) {
+        var url = String.format(
+                "%s?key=%s&cx=%s&q=%s",
                 props.getEndpoint(),
                 props.getKey(),
-                URLEncoder.encode(cx, StandardCharsets.UTF_8));
+                props.getCx(),
+                URLEncoder.encode(query, StandardCharsets.UTF_8)
+        );
 
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(url))

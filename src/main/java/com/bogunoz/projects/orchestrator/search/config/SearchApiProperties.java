@@ -10,4 +10,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class SearchApiProperties {
     private String key;
     private String endpoint;
+    private String cx;
 }
