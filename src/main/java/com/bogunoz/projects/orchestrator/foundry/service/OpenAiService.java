@@ -1,14 +1,13 @@
 package com.bogunoz.projects.orchestrator.foundry.service;
 
 import com.azure.ai.openai.OpenAIClient;
-import com.azure.ai.openai.models.ChatCompletionsOptions;
-import com.azure.ai.openai.models.ChatRequestSystemMessage;
-import com.azure.ai.openai.models.ChatRequestUserMessage;
+import com.azure.ai.openai.models.*;
+import com.azure.core.util.BinaryData;
 import com.bogunoz.projects.orchestrator.common.constant.Error;
 import com.bogunoz.projects.orchestrator.common.model.Response;
 import com.bogunoz.projects.orchestrator.contract.foundry.FoundryChatRequest;
+import com.bogunoz.projects.orchestrator.contract.orchestrator.config.OrchestratorProperties;
 import com.bogunoz.projects.orchestrator.foundry.config.AIClientProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -18,7 +17,9 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -28,15 +29,17 @@ public class OpenAiService implements IAIService {
     // region IoC
     private final OpenAIClient client;
     private final String defaultPrompt;
-    private final AIClientProperties props;
+    private final AIClientProperties aiProps;
+    private final OrchestratorProperties orchestratorProp;
     // endregion IoC
 
     public OpenAiService(@Value("classpath:prompts/default-prompt.txt") Resource resource,
                          OpenAIClient client,
-                         AIClientProperties props) {
+                         AIClientProperties aiProps, OrchestratorProperties orchestratorProp) {
         this.client = client;
-        this.props = props;
+        this.aiProps = aiProps;
         this.defaultPrompt = readResource(resource);
+        this.orchestratorProp = orchestratorProp;
     }
 
     private String readResource(Resource resource) {
@@ -48,31 +51,62 @@ public class OpenAiService implements IAIService {
     }
 
     @Async
-    public CompletableFuture<Response<String>> askChatAsync(FoundryChatRequest request) {
+    public CompletableFuture<Response<ChatResponseMessage>> askChatAsync(FoundryChatRequest request) {
         var systemPrompt = buildSystemPrompt(request.context());
 
-        var chatMessages = List.of(
-                new ChatRequestSystemMessage(systemPrompt),
-                new ChatRequestUserMessage(request.message())
-        );
-
+        List<ChatRequestMessage> chatMessages = new ArrayList<>();
+        chatMessages.add(new ChatRequestSystemMessage(systemPrompt));
+        chatMessages.add(new ChatRequestUserMessage(request.message()));
 
         var options = new ChatCompletionsOptions(chatMessages);
-        options.setMaxTokens(props.getMaxTokens());
-        options.setTemperature(props.getTemperature());
-        options.setTopP(props.getTopP());
+        options.setMaxTokens(aiProps.getMaxTokens());
+        options.setTemperature(aiProps.getTemperature());
+        options.setTools(getAvailableTools());
+        options.setTopP(aiProps.getTopP());
 
         var result = client.getChatCompletions(
-                props.getDeploymentName(),
+                aiProps.getDeploymentName(),
                 options
         );
 
-        var answer = result.getChoices()
-                .get(0)
-                .getMessage()
-                .getContent();
+        var message = result.getChoices().get(0).getMessage();
+        return CompletableFuture.completedFuture(Response.ok(message));
+    }
 
-        return CompletableFuture.completedFuture(Response.ok(answer));
+    private List<ChatCompletionsToolDefinition> getAvailableTools() {
+        ChatCompletionsFunctionToolDefinitionFunction weatherFunc =
+                new ChatCompletionsFunctionToolDefinitionFunction(orchestratorProp.getToolWeather())
+                        .setDescription("Pobiera aktualną prognozę pogody dla danej lokalizacji.")
+                        .setParameters(BinaryData.fromObject(Map.of(
+                                "type", "object",
+                                "properties", Map.of(
+                                        "location", Map.of(
+                                                "type", "string",
+                                                "description", "Miasto i kraj, np. Warszawa, Polska"
+                                        )
+                                ),
+                                "required", List.of("location")
+                        )));
+
+        ChatCompletionsFunctionToolDefinitionFunction searchFunc =
+                new ChatCompletionsFunctionToolDefinitionFunction(orchestratorProp.getToolSearch())
+                        .setDescription("Przeszukuje internet w poszukiwaniu najnowszych informacji i wiadomości.")
+                        .setParameters(BinaryData.fromObject(Map.of(
+                                "type", "object",
+                                "properties", Map.of(
+                                        "searchKeys", Map.of(
+                                                "type", "array",
+                                                "items", Map.of("type", "string"),
+                                                "description", "Lista słów kluczowych do wyszukania"
+                                        )
+                                ),
+                                "required", List.of("searchKeys")
+                        )));
+
+        return List.of(
+                new ChatCompletionsFunctionToolDefinition(weatherFunc),
+                new ChatCompletionsFunctionToolDefinition(searchFunc)
+        );
     }
 
     private String buildSystemPrompt(List<String> context) {

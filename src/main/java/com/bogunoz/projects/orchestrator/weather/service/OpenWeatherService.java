@@ -48,18 +48,18 @@ public class OpenWeatherService implements IWeatherService {
 
     private CompletableFuture<LocationModel> resolveLocation(WeatherForecastRequest request) {
 
-        if (!request.useCityName()) {
-            LocationModel location = new LocationModel(request.latitude(), request.longitude());
+        if (!request.isUseCityName()) {
+            LocationModel location = new LocationModel(request.getLatitude(), request.getLatitude());
             return CompletableFuture.completedFuture(location);
         }
 
-        if (!StringUtils.hasLength(request.cityName())) {
+        if (!StringUtils.hasLength(request.getCityName())) {
             return CompletableFuture.failedFuture(
                     new IllegalArgumentException(Error.INCORRECT_SERVICE_REQUEST)
             );
         }
 
-        return weatherApiClient.getGeocodingAsync(request.cityName())
+        return weatherApiClient.getGeocodingAsync(request.getCityName())
                 .thenApply(OpenWeatherService::mapToLocationModel)
                 .thenCompose(location -> {
                     if (location == null) {
