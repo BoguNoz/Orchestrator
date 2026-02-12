@@ -19,4 +19,16 @@ public class WeatherForecastResponse {
     private float tempMax;
     private int pressure;
     private int humidity;
+
+    @Override
+    public String toString() {
+        return "Opis: " + weatherDescription +
+                ", Temperatura: " + temperature + "°C" +
+                ", Odczuwalna: " + feelsLike + "°C" +
+                ", Min: " + tempMin + "°C" +
+                ", Max: " + tempMax + "°C" +
+                ", Ciśnienie: " + pressure + " hPa" +
+                ", Wilgotność: " + humidity + "%";
+    }
+
 }

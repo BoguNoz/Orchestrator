@@ -1,0 +1,13 @@
+{
+  "description": "Pobiera aktualną prognozę pogody dla danej lokalizacji.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "location": {
+        "type": "string",
+        "description": "Miasto i kraj, np. Warszawa, Polska"
+      }
+    },
+    "required": ["location"]
+  }
+}

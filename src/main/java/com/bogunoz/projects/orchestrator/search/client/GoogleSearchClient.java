@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
 @Component
-public class GoogleSearchClient implements ISearchClient {
+public class GoogleSearchClient implements SearchClient {
     // region IoC
     private final HttpClient client;
     private final SearchApiProperties props;

@@ -11,6 +11,6 @@ import java.util.concurrent.CompletableFuture;
 
 @NamedInterface
 @ServiceInterface(name = "foundry")
-public interface IAIService {
+public interface AIService {
     CompletableFuture<Response<ChatResponseMessage>> askChatAsync(FoundryChatRequest request);
 }

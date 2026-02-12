@@ -5,7 +5,7 @@ import com.azure.core.annotation.ServiceInterface;
 import java.util.concurrent.CompletableFuture;
 
 @ServiceInterface(name = "search-client")
-public interface ISearchClient {
+public interface SearchClient {
 
     CompletableFuture<String> getSearchResult(String query);
 }

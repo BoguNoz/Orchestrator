@@ -15,4 +15,5 @@ public class AIClientProperties {
     private int maxTokens;
     private double temperature;
     private double topP;
+    private String buildPromptContext;
 }

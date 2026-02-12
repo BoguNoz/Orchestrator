@@ -5,7 +5,7 @@ import com.azure.core.annotation.ServiceInterface;
 import java.util.concurrent.CompletableFuture;
 
 @ServiceInterface(name = "weather-client")
-public interface IWeatherClient {
+public interface WeatherClient {
     CompletableFuture<String> getGeocodingAsync(String city);
     CompletableFuture<String> getCurrentWeatherAsync(double lat, double lon);
 }

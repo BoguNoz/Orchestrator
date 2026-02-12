@@ -9,6 +9,6 @@ import java.util.concurrent.CompletableFuture;
 
 @NamedInterface
 @ServiceInterface(name = "search")
-public interface ISearchService {
+public interface SearchService {
     CompletableFuture<Response<String>> searchForAsync(List<String> searchKeys);
 }

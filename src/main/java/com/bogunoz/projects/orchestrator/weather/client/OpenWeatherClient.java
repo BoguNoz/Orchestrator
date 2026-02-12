@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
 @Component
-public class OpenWeatherClient implements IWeatherClient {
+public class OpenWeatherClient implements WeatherClient {
 
     // region IoC
     private final HttpClient client;

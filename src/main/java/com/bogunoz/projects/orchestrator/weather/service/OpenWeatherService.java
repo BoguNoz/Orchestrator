@@ -4,7 +4,7 @@ import com.bogunoz.projects.orchestrator.common.constant.Error;
 import com.bogunoz.projects.orchestrator.common.model.Response;
 import com.bogunoz.projects.orchestrator.contract.weather.WeatherForecastRequest;
 import com.bogunoz.projects.orchestrator.contract.weather.WeatherForecastResponse;
-import com.bogunoz.projects.orchestrator.weather.client.IWeatherClient;
+import com.bogunoz.projects.orchestrator.weather.client.WeatherClient;
 import com.bogunoz.projects.orchestrator.weather.model.LocationModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -18,14 +18,14 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class OpenWeatherService implements IWeatherService {
+public class OpenWeatherService implements WeatherService {
 
     // region IoC
-    private final IWeatherClient weatherApiClient;
+    private final WeatherClient weatherApiClient;
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     // endregion IoC
 
-    public OpenWeatherService(IWeatherClient weatherApiClient) {
+    public OpenWeatherService(WeatherClient weatherApiClient) {
         this.weatherApiClient = weatherApiClient;
     }
 

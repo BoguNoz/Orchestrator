@@ -2,11 +2,11 @@ package com.bogunoz.projects.orchestrator.foundry.service;
 
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.models.*;
-import com.azure.core.util.BinaryData;
 import com.bogunoz.projects.orchestrator.common.constant.Error;
 import com.bogunoz.projects.orchestrator.common.model.Response;
 import com.bogunoz.projects.orchestrator.contract.foundry.FoundryChatRequest;
 import com.bogunoz.projects.orchestrator.contract.orchestrator.config.OrchestratorProperties;
+import com.bogunoz.projects.orchestrator.foundry.client.ToolDefinitionProvider;
 import com.bogunoz.projects.orchestrator.foundry.config.AIClientProperties;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,27 +19,26 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Service
 @Qualifier("openai")
-public class OpenAiService implements IAIService {
+public class OpenAiService implements AIService {
 
     // region IoC
     private final OpenAIClient client;
     private final String defaultPrompt;
-    private final AIClientProperties aiProps;
-    private final OrchestratorProperties orchestratorProp;
+    private final AIClientProperties props;
+    private final ToolDefinitionProvider toolClient;
     // endregion IoC
 
     public OpenAiService(@Value("classpath:prompts/default-prompt.txt") Resource resource,
                          OpenAIClient client,
-                         AIClientProperties aiProps, OrchestratorProperties orchestratorProp) {
+                         AIClientProperties aiProps, OrchestratorProperties orchestratorProp, ToolDefinitionProvider toolClient) {
         this.client = client;
-        this.aiProps = aiProps;
+        this.props = aiProps;
         this.defaultPrompt = readResource(resource);
-        this.orchestratorProp = orchestratorProp;
+        this.toolClient = toolClient;
     }
 
     private String readResource(Resource resource) {
@@ -59,13 +58,13 @@ public class OpenAiService implements IAIService {
         chatMessages.add(new ChatRequestUserMessage(request.message()));
 
         var options = new ChatCompletionsOptions(chatMessages);
-        options.setMaxTokens(aiProps.getMaxTokens());
-        options.setTemperature(aiProps.getTemperature());
-        options.setTools(getAvailableTools());
-        options.setTopP(aiProps.getTopP());
+        options.setMaxTokens(props.getMaxTokens());
+        options.setTemperature(props.getTemperature());
+        options.setTools(toolClient.getAvailableTools());
+        options.setTopP(props.getTopP());
 
         var result = client.getChatCompletions(
-                aiProps.getDeploymentName(),
+                props.getDeploymentName(),
                 options
         );
 
@@ -73,53 +72,16 @@ public class OpenAiService implements IAIService {
         return CompletableFuture.completedFuture(Response.ok(message));
     }
 
-    private List<ChatCompletionsToolDefinition> getAvailableTools() {
-        ChatCompletionsFunctionToolDefinitionFunction weatherFunc =
-                new ChatCompletionsFunctionToolDefinitionFunction(orchestratorProp.getToolWeather())
-                        .setDescription("Pobiera aktualną prognozę pogody dla danej lokalizacji.")
-                        .setParameters(BinaryData.fromObject(Map.of(
-                                "type", "object",
-                                "properties", Map.of(
-                                        "location", Map.of(
-                                                "type", "string",
-                                                "description", "Miasto i kraj, np. Warszawa, Polska"
-                                        )
-                                ),
-                                "required", List.of("location")
-                        )));
-
-        ChatCompletionsFunctionToolDefinitionFunction searchFunc =
-                new ChatCompletionsFunctionToolDefinitionFunction(orchestratorProp.getToolSearch())
-                        .setDescription("Przeszukuje internet w poszukiwaniu najnowszych informacji i wiadomości.")
-                        .setParameters(BinaryData.fromObject(Map.of(
-                                "type", "object",
-                                "properties", Map.of(
-                                        "searchKeys", Map.of(
-                                                "type", "array",
-                                                "items", Map.of("type", "string"),
-                                                "description", "Lista słów kluczowych do wyszukania"
-                                        )
-                                ),
-                                "required", List.of("searchKeys")
-                        )));
-
-        return List.of(
-                new ChatCompletionsFunctionToolDefinition(weatherFunc),
-                new ChatCompletionsFunctionToolDefinition(searchFunc)
-        );
-    }
-
     private String buildSystemPrompt(List<String> context) {
         var sb = new StringBuilder();
         sb.append(defaultPrompt.trim());
 
         if (context != null && !context.isEmpty()) {
-            sb.append("\n\nContext:\n");
+            sb.append(props.getBuildPromptContext());
             for (String ctx : context) {
                 sb.append("- ").append(ctx).append("\n");
             }
         }
-
         return sb.toString();
     }
 }
