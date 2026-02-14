@@ -1,12 +1,18 @@
 package com.bogunoz.projects.orchestrator.contract.websocket.model;
 
-import lombok.Builder;
+import lombok.*;
 import org.springframework.modulith.NamedInterface;
 
+@Setter
+@Getter
 @NamedInterface
 @Builder
-public record ChatMessage (
-    String content,
-    MessageType messageType,
-    String sender
-) {}
+@NoArgsConstructor
+@AllArgsConstructor
+public class ChatMessage {
+    private String sessionId;
+    private String content;
+    private MessageType messageType;
+    private String sender;
+
+}

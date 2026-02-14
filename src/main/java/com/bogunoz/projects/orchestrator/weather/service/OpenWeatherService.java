@@ -36,7 +36,7 @@ public class OpenWeatherService implements WeatherService {
         return resolveLocation(request)
                 .thenCompose(location -> weatherApiClient
                         .getCurrentWeatherAsync(location.getLat(), location.getLon())
-                        .thenApply(OpenWeatherService::mapToWeatherForecastSafe)
+                        .thenApply(response -> mapToWeatherForecastSafe(response, request.getCityName()))
                 )
                 .handle((response, ex) -> {
                     if (response == null || ex != null) {
@@ -79,7 +79,7 @@ public class OpenWeatherService implements WeatherService {
         }
     }
 
-    private static @Nullable WeatherForecastResponse mapToWeatherForecastSafe(String json) {
+    private static @Nullable WeatherForecastResponse mapToWeatherForecastSafe(String json, String location) {
         try {
             JsonNode root = OBJECT_MAPPER.readTree(json);
 
@@ -99,6 +99,7 @@ public class OpenWeatherService implements WeatherService {
             response.setTempMax((float) main.path("temp_max").asDouble());
             response.setPressure(main.path("pressure").asInt());
             response.setHumidity(main.path("humidity").asInt());
+            response.setLocation(location);
 
             return response;
 

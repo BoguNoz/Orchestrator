@@ -2,7 +2,7 @@ package com.bogunoz.projects.orchestrator.common.constant;
 
 import org.springframework.modulith.NamedInterface;
 
-@NamedInterface("constant")
+@NamedInterface("error-const")
 public final class Error {
 
     public static final String EXTERNAL_SERVICE_ERROR = "External service error";

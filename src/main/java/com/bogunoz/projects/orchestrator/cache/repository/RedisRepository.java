@@ -1,7 +1,7 @@
 package com.bogunoz.projects.orchestrator.cache.repository;
 
 import com.bogunoz.projects.orchestrator.cache.config.CacheProperties;
-import com.bogunoz.projects.orchestrator.contract.websocket.model.ChatMessage;
+import org.apache.tomcat.util.buf.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -24,16 +24,29 @@ public class RedisRepository<T> implements CacheRepository<T> {
 
     @Override
     public CompletableFuture<Void> addAsync(T object, String key) {
-        return CompletableFuture.runAsync(() ->
-                redisTemplate.opsForHash().put(KEY_PREFIX, key, object));
+        return CompletableFuture.runAsync(() -> {
+
+            var messageKey = java.util.UUID.randomUUID().toString();
+            var redisKey = KEY_PREFIX + key + messageKey;
+
+            redisTemplate.opsForHash().put(redisKey, messageKey, object);
+        });
     }
 
     @Override
-    public CompletableFuture<List<T>> getAllAsync() {
-        return CompletableFuture.supplyAsync(() ->
-                redisTemplate.opsForHash().values(KEY_PREFIX)
-                        .stream()
-                        .map(o -> (T) o)
-                        .collect(Collectors.toList()));
+    public CompletableFuture<List<T>> getAllAsync(String key) {
+        return CompletableFuture.supplyAsync(() -> {
+            String redisKeyPattern = KEY_PREFIX + key + "*";
+
+            var matchingKeys = redisTemplate.keys(redisKeyPattern);
+            if (matchingKeys == null || matchingKeys.isEmpty()) {
+                return List.<T>of();
+            }
+
+            return matchingKeys.stream()
+                    .flatMap(k -> redisTemplate.opsForHash().values(k).stream())
+                    .map(o -> (T) o)
+                    .collect(Collectors.toList());
+        });
     }
 }

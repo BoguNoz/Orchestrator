@@ -11,5 +11,5 @@ import java.util.concurrent.CompletableFuture;
 @ServiceInterface(name = "cache-service")
 public interface MessageCacheService {
     CompletableFuture<Void> addMessage(ChatMessage message);
-    CompletableFuture<List<ChatMessage>> getAllMessages();
+    CompletableFuture<List<ChatMessage>> getAllMessages(String key);
 }

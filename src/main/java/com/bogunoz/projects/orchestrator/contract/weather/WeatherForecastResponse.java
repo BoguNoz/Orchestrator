@@ -19,6 +19,7 @@ public class WeatherForecastResponse {
     private float tempMax;
     private int pressure;
     private int humidity;
+    private String location;
 
     @Override
     public String toString() {
@@ -28,7 +29,8 @@ public class WeatherForecastResponse {
                 ", Min: " + tempMin + "°C" +
                 ", Max: " + tempMax + "°C" +
                 ", Ciśnienie: " + pressure + " hPa" +
-                ", Wilgotność: " + humidity + "%";
+                ", Wilgotność: " + humidity + "%" +
+                ", Dane dla: " + location;
     }
 
 }

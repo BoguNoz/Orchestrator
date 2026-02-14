@@ -54,6 +54,7 @@ function sendMessage(event) {
     const messageContent = messageInput.value.trim();
     if (messageContent && stompClient) {
         var chatMessage = {
+            sessionId: "",
             sender: username,
             content: messageContent,
             messageType: 'CHAT'
