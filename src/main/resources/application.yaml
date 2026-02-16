@@ -19,12 +19,28 @@ ai:
     max-tokens: 500
     temperature: 1d
     top-p: 1d
+    build-prompt-context: Otrzymane wyniki z narzędzi (wykorzystaj je i NIE wywołuj narzędzi ponownie dla tych samych danych)
+
+orchestrator:
+  tool-weather: get_weather
+  tool-search: search_news
 
 weather:
   api:
     key:
     geocoding-endpoint: https://api.openweathermap.org/geo/1.0/direct
     current-endpoint: https://api.openweathermap.org/data/2.5/weather
+
+search:
+  api:
+    key:
+    endpoint: https://www.googleapis.com/customsearch/v1
+    cx:
+
+cache:
+  host: localhost
+  port: 6379
+  prefix: redis
 
 spring:
   application:
