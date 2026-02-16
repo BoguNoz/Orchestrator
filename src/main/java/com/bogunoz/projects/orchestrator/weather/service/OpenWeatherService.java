@@ -4,14 +4,13 @@ import com.bogunoz.projects.orchestrator.common.constant.Error;
 import com.bogunoz.projects.orchestrator.common.model.Response;
 import com.bogunoz.projects.orchestrator.contract.weather.WeatherForecastRequest;
 import com.bogunoz.projects.orchestrator.contract.weather.WeatherForecastResponse;
-import com.bogunoz.projects.orchestrator.weather.client.IWeatherApiClient;
+import com.bogunoz.projects.orchestrator.weather.client.WeatherClient;
 import com.bogunoz.projects.orchestrator.weather.model.LocationModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jspecify.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -19,15 +18,14 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class OpenWeatherService implements IWeatherService {
+public class OpenWeatherService implements WeatherService {
 
     // region IoC
-    private final IWeatherApiClient weatherApiClient;
+    private final WeatherClient weatherApiClient;
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     // endregion IoC
 
-    @Autowired
-    public OpenWeatherService(IWeatherApiClient weatherApiClient) {
+    public OpenWeatherService(WeatherClient weatherApiClient) {
         this.weatherApiClient = weatherApiClient;
     }
 
@@ -38,7 +36,7 @@ public class OpenWeatherService implements IWeatherService {
         return resolveLocation(request)
                 .thenCompose(location -> weatherApiClient
                         .getCurrentWeatherAsync(location.getLat(), location.getLon())
-                        .thenApply(OpenWeatherService::mapToWeatherForecastSafe)
+                        .thenApply(response -> mapToWeatherForecastSafe(response, request.getCityName()))
                 )
                 .handle((response, ex) -> {
                     if (response == null || ex != null) {
@@ -50,18 +48,18 @@ public class OpenWeatherService implements IWeatherService {
 
     private CompletableFuture<LocationModel> resolveLocation(WeatherForecastRequest request) {
 
-        if (!request.useCityName()) {
-            LocationModel location = new LocationModel(request.latitude(), request.longitude());
+        if (!request.isUseCityName()) {
+            LocationModel location = new LocationModel(request.getLatitude(), request.getLatitude());
             return CompletableFuture.completedFuture(location);
         }
 
-        if (!StringUtils.hasLength(request.cityName())) {
+        if (!StringUtils.hasLength(request.getCityName())) {
             return CompletableFuture.failedFuture(
                     new IllegalArgumentException(Error.INCORRECT_SERVICE_REQUEST)
             );
         }
 
-        return weatherApiClient.getGeocodingAsync(request.cityName())
+        return weatherApiClient.getGeocodingAsync(request.getCityName())
                 .thenApply(OpenWeatherService::mapToLocationModel)
                 .thenCompose(location -> {
                     if (location == null) {
@@ -81,7 +79,7 @@ public class OpenWeatherService implements IWeatherService {
         }
     }
 
-    private static @Nullable WeatherForecastResponse mapToWeatherForecastSafe(String json) {
+    private static @Nullable WeatherForecastResponse mapToWeatherForecastSafe(String json, String location) {
         try {
             JsonNode root = OBJECT_MAPPER.readTree(json);
 
@@ -101,6 +99,7 @@ public class OpenWeatherService implements IWeatherService {
             response.setTempMax((float) main.path("temp_max").asDouble());
             response.setPressure(main.path("pressure").asInt());
             response.setHumidity(main.path("humidity").asInt());
+            response.setLocation(location);
 
             return response;
 

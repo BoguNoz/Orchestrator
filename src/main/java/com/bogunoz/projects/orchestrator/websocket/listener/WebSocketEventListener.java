@@ -1,8 +1,8 @@
 package com.bogunoz.projects.orchestrator.websocket.listener;
 
 import com.bogunoz.projects.orchestrator.websocket.config.WebSocketProperties;
-import com.bogunoz.projects.orchestrator.websocket.model.ChatMessage;
-import com.bogunoz.projects.orchestrator.websocket.model.MessageType;
+import com.bogunoz.projects.orchestrator.contract.websocket.model.ChatMessage;
+import com.bogunoz.projects.orchestrator.contract.websocket.model.MessageType;
 import io.micrometer.common.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

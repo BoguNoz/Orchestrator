@@ -1,0 +1,14 @@
+{
+  "description": "Przeszukuje internet w poszukiwaniu najnowszych informacji i wiadomości.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "searchKeys": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Lista słów kluczowych do wyszukania"
+      }
+    },
+    "required": ["searchKeys"]
+  }
+}

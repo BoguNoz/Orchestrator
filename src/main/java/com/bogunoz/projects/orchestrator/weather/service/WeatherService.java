@@ -11,6 +11,6 @@ import java.util.concurrent.CompletableFuture;
 
 @NamedInterface
 @ServiceInterface(name = "weather")
-public interface IWeatherService {
+public interface WeatherService {
     CompletableFuture<Response<WeatherForecastResponse>> getWeatherForecastAsync(WeatherForecastRequest request) throws IOException, InterruptedException;
 }

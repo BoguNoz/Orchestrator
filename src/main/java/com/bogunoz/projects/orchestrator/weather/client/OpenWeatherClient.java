@@ -1,7 +1,6 @@
 package com.bogunoz.projects.orchestrator.weather.client;
 
 import com.bogunoz.projects.orchestrator.weather.config.WeatherApiProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -13,15 +12,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
 @Component
-public class OpenWeatherApiClient implements IWeatherApiClient{
+public class OpenWeatherClient implements WeatherClient {
 
     // region IoC
     private final HttpClient client;
     private final WeatherApiProperties props;
     // endregion IoC
 
-    @Autowired
-    public OpenWeatherApiClient(HttpClient client, WeatherApiProperties props) {
+    public OpenWeatherClient(HttpClient client, WeatherApiProperties props) {
         this.client = client;
         this.props = props;
     }
